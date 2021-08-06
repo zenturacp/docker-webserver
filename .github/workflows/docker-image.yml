@@ -15,9 +15,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.dockerhubusername }}/webserver:latest
+      run: docker build . --file Dockerfile --tag ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest
     - name: Create new Tag
-      run: docker tag webserver:latest ${{ secrets.dockerhubusername }}/webserver:$(date +%s)
+      run: docker tag ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:$(date +%s)
     - name: Docker Login
       uses: docker/login-action@v1.10.0
       with:
