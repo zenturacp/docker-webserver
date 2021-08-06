@@ -14,12 +14,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Set Date Variable
+      run: echo "::set-output name=DATE_TAG::$(date +%s)"
+      id: random-tag
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest
     - name: Create new Tag
-      run: docker tag ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:$(date +%s)
+      run: docker tag ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:${{ steps.random-tag.outputs.DATE_TAG }}
     - name: Docker Login
       uses: docker/login-action@v1.10.0
       with:
         username: ${{ secrets.dockerhubusername }}
         password: ${{ secrets.dockerhubpat }}
+    - name: Push Latest
+      run: |
+        docker push ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:latest
+        docker push ${{ secrets.dockerhubusername }}/${{ secrets.dockerhubreponame }}:${{ steps.random-tag.outputs.DATE_TAG }}
+  
